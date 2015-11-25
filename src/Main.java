@@ -1,7 +1,19 @@
 import java.util.Scanner;
 
-public class Main {
+//java fx stuff
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+
+public class Main extends Application implements EventHandler<ActionEvent> {
 	static int difficulty;
+	Button button;
+	Button button2;
 
 	public static int getInt () {
 		Scanner keyboard = new Scanner(System.in);
@@ -14,6 +26,7 @@ public class Main {
 				System.out.println("Not an Integer");
 				break;
 			}
+			//It has to be between 1 and 8
 			if (num < 1 || num > 8) {
 				System.out.println("Not between 1 and 8");
 			} else {
@@ -68,31 +81,43 @@ public class Main {
 		int number = (int)(Math.random() * multiple);
 		return number;
 	}
-	
-	public static void main(String[] args) {
+
+	//GUI Experimentation
+	public void start(Stage primaryStage) throws Exception {
+		primaryStage.setTitle("Speed Dialer");
+		button = new Button("Click me");
+		button2 = new Button("Run");
+
+		button.setOnAction(this);
+
+		StackPane layout = new StackPane();
+		layout.getChildren().add(button);
+
+		Scene scene = new Scene(layout, 300, 400);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+	public void handle(ActionEvent event) {
+		if (event.getSource()==button){
+			System.out.println("Work");
+		}
+	}
+	//end GUI Experimentation
+
+	public static void main(String[] args) throws InterruptedException {
+		launch(args); //Comment out to run w/o GUI
 		boolean run = true;
 		System.out.println("Welcome to SpeedDialer!");
 		int highScore = 0;
 		int currentScore = 0;
 		do {
 			introduction();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			Thread.sleep(1000);
 			System.out.println("Enter the following number as fast as possible:");
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			Thread.sleep(2000);
 			System.out.print("Ready..?   ");
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			Thread.sleep(1000);
 			System.out.println("GO!");
 			int theNumber = phoneNumberGen(difficulty);
 			System.out.println(theNumber);
@@ -102,6 +127,7 @@ public class Main {
 				response = getIntGame();
 			} while (response!=theNumber);
 			double timeEnd = System.currentTimeMillis();
+			//Calculates score
 			currentScore = (int)(10000 - (timeStart - timeEnd) * -1);
 			if (currentScore > highScore) {
 				highScore = currentScore;
@@ -110,7 +136,7 @@ public class Main {
 				System.out.println("Your score: " + currentScore);
 				System.out.println("High score: " + highScore);
 			}
-		} while (run = true);
+		} while (run);
 	}
 
 }
