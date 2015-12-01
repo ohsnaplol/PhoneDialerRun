@@ -1,19 +1,20 @@
 import java.util.Scanner;
 
+
 //java fx stuff
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import javafx.application.*;
+import javafx.stage.*;
+import javafx.scene.layout.*;
+import javafx.scene.control.*;
 
 
 public class Main extends Application implements EventHandler<ActionEvent> {
 	static int difficulty;
-	Button button;
-	Button button2;
+
 
 	public static int getInt () {
 		Scanner keyboard = new Scanner(System.in);
@@ -81,27 +82,49 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		int number = (int)(Math.random() * multiple);
 		return number;
 	}
-
+	
+	Stage window;
+	Scene difficultySelect, game;
 	//GUI Experimentation
-	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("Speed Dialer");
-		button = new Button("Click me");
-		button2 = new Button("Run");
-
-		button.setOnAction(this);
-
-		StackPane layout = new StackPane();
-		layout.getChildren().add(button);
-
-		Scene scene = new Scene(layout, 300, 400);
-		primaryStage.setScene(scene);
-		primaryStage.show();
-	}
-
-	public void handle(ActionEvent event) {
-		if (event.getSource()==button){
-			System.out.println("Work");
-		}
+	public void start(Stage primaryStage) {
+		window = primaryStage;
+		
+		//button 1
+		Label intro = new Label("Welcome to Speed Dialer!\nSelect a difficulty");
+		Button button1 = new Button("1");
+		button1.setOnAction(e -> {
+			difficulty = 1;
+			window.setScene(game);
+			System.out.println(difficulty);
+		});
+		
+		//button 2
+		Button button2 = new Button("2");
+		button2.setOnAction(e -> {
+			difficulty = 2;
+			window.setScene(game);
+			System.out.println(difficulty);
+		});
+		
+		//quit button
+		Button quitButton = new Button("back");
+		quitButton.setOnAction(e -> window.setScene(difficultySelect));
+		
+		//Layout1 - children in vertical column (CHOOSE DIFFICULTY)
+		VBox layout1 = new VBox(20);
+		layout1.getChildren().addAll(intro, button1, button2);
+		difficultySelect = new Scene(layout1, 300,400);
+		
+		//Layout 2
+		StackPane layout2 = new StackPane();
+		layout2.getChildren().add(quitButton);
+		game = new Scene(layout2,600,300);
+		
+		//Display scene1
+		window.setScene(difficultySelect);
+		window.setTitle("Speed Dialer");
+		window.show();
+		
 	}
 	//end GUI Experimentation
 
