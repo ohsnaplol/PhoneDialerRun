@@ -1,9 +1,5 @@
-import java.util.Random;
+import java.util.HashMap;
 import java.util.Scanner;
-
-
-
-
 //java fx stuff
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,56 +13,46 @@ import javafx.scene.control.*;
 
 public abstract class Main extends Application implements EventHandler<ActionEvent> {
 	static int difficulty;
-
 	/*
-	 * Get Int() makes sure the input is between 1 and 8 and isn't a string
+	 * getDifficulty makes sure the input is between 1 and 8 and isn't a string
 	 */
-	public static int getInt () {
+	public static int getDifficulty () {
 		@SuppressWarnings("resource")
 		Scanner keyboard = new Scanner(System.in);
-		int num = 5; //default difficulty
-		boolean goodInput = false;
-		do {
-			//Makes sure the input isn't a String
+		int num = 8;
+		while(true) {
 			try {
 				num = keyboard.nextInt();
 			} catch (Exception e){
 				System.out.println("Not an Integer");
 				break;
 			}
-			//It has to be between 1 and 8
-			if (num < 1 || num > 8) {
-				System.out.println("Not between 1 and 8");
+			if (num < 1 || num > 19) {
+				System.out.println("Cannot be less difficult than 1 or more than 19");
 			} else {
-				goodInput = true;
+				break;
 			}
-		} while (!goodInput);
+		}
 		return num;
 	}
 
 	/*
 	 * getIntGame makes sure that what the user types during gameplay is only numbers
 	 */
-	public static int getIntGame() {
+	public static long getIntGame() {
 		@SuppressWarnings("resource")
 		Scanner keyboard = new Scanner(System.in);
-		int num = 0;
+		long num = 0;
 		boolean goodInput = false;
 		do {
 			try {
-				num = keyboard.nextInt();
+				num = keyboard.nextLong();
 			} catch (Exception e){
 				System.out.println("Not an Integer");
 			}
 			goodInput = true;
 		} while (!goodInput);
 		return num;
-	}
-
-	public static void introduction () {
-		System.out.println("Enter a difficulty level between 1 and 8:");
-		difficulty = getInt();
-		System.out.println("Difficulty set to " + difficulty);
 	}
 
 	//GUI Experimentation
@@ -115,37 +101,52 @@ public abstract class Main extends Application implements EventHandler<ActionEve
 	//end GUI Experimentation
 
 	public static void main(String[] args) throws InterruptedException {
-		boolean run = true;
-		double highScore = 999999999;
+		HashMap<Integer, Double> HiScore = new HashMap<Integer, Double>();
+		//fills the high score list
+		for (int i = 1; i <=19;i++) {
+			HiScore.put(i, 999999999.0);
+		}
 		double currentScore = 0;
 		//launch(args); //Comment out to run w/o GUI
-		System.out.println("Welcome to SpeedDialer!");
-		do {
-			introduction();
+		System.out.println("Welcome to Speed Dialer!");
+
+		while(true) {
+			System.out.println("Enter a difficulty level between 1 and 19:");
+			difficulty = getDifficulty();
+			 //gets the high score of that difficulty and stores it in a local variable
+			double highScore = HiScore.get(difficulty);
+			System.out.println("Difficulty set to " + difficulty);
+			//Shows the score to beat if they haven't played yet
+			if (HiScore.get(difficulty)!=999999999.0) {
+				System.out.println("High Score is " + HiScore.get(difficulty) + " ms");
+			}
 			Thread.sleep(1000);
 			System.out.println("Enter the following number as fast as possible:");
 			Thread.sleep(2000);
 			System.out.print("Ready..?  ");
 			Thread.sleep(1000);
 			System.out.println("GO!");
-			int theNumber = (int)(Math.random() * Math.pow(10, difficulty));
+			//generates the number
+			long theNumber = (long)(Math.random() * Math.pow(10, difficulty));
 			System.out.println(theNumber);
-			int response;
+			long response;
 			double timeStart = System.currentTimeMillis();
+			//Keep trying until response = theNumber
 			do {
 				response = getIntGame();
 			} while (response!=theNumber);
 			double timeEnd = System.currentTimeMillis();
 			//Calculates score in ms
-			currentScore = timeEnd - timeStart;
+			currentScore = (int)(timeEnd - timeStart);
+			//if user gets a high score, only show the high score
 			if (currentScore < highScore) {
-				highScore = currentScore;
-				System.out.println("New high score! " + highScore + " ms");
+				HiScore.put(difficulty, currentScore);
+				System.out.println("New high score! " + currentScore + " ms " + " for difficulty " + difficulty);
 			} else {
 				System.out.println("Your score: " + currentScore + " ms");
-				System.out.println("High score: " + highScore + " ms");
+				System.out.println("High score: " + HiScore.get(difficulty) + " ms");
 			}
-		} while (run);
+		}
+		
 	}
-
 }
